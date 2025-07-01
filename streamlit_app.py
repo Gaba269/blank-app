@@ -45,8 +45,6 @@ if uploaded_file is not None:
     st.write("Data preview:")
     st.dataframe(df)
 
-
-st.write("DataFrame actuel :")
 st.dataframe(st.session_state.df)
 
 name = st.text_input("Nom")

@@ -3,7 +3,11 @@ import pandas as pd
 import yfinance as yf
 import matplotlib.pyplot as plt
 import numpy as np
-plt.style.use('seaborn-darkgrid')
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+sns.set_style("darkgrid") 
+
 custom_css = """
 <style>
 /* Change the background color of the main content area */

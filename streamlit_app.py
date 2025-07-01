@@ -45,7 +45,7 @@ if uploaded_file is not None:
     st.write("Data preview:")
     st.dataframe(df)
 
-st.dataframe(st.session_state.df)
+st.session_state.df=df
 
 name = st.text_input("Nom")
 quantity = st.number_input("Quantité", min_value=0.0, step=1.0)

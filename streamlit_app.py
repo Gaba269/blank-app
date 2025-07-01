@@ -235,10 +235,11 @@ st.success(f"Performance globale portefeuille : {portfolio_perf:.2f} %")
 df['weight_pct'] = df['weight'] * 100
 
 # Graphique camembert
-plt.figure(figsize=(7,7))
-plt.pie(df['weight_pct'], labels=df['name'], autopct='%1.1f%%')
-plt.title("Répartition du portefeuille")
-st.pyplot(plt)
+import plotly.express as px
+
+fig_pie = px.pie(df, values='weight_pct', names='name', title='Répartition du portefeuille',
+                 hole=0.3)  # donut style (optionnel)
+st.plotly_chart(fig_pie)
 
 
 # Graphique barres performance
@@ -246,12 +247,12 @@ st.pyplot(plt)
 
 colors = np.where(df['perf'] >= 0, 'green', 'red')
 
-plt.figure(figsize=(10,5))
-plt.bar(df['name'], df['perf'], color=colors)
-plt.xticks(rotation=45, ha='right')
-plt.ylabel("Performance en %")
-plt.title("Performance par actif")
-st.pyplot(plt)
+fig_bar = px.bar(df, x='name', y='perf', text='perf', title="Performance par actif",
+                 color='perf', color_continuous_scale='Blues')  # ou autre palette
+
+fig_bar.update_layout(xaxis_tickangle=-45, yaxis_title="Performance en %")
+st.plotly_chart(fig_bar)
+
 
 
 # ici, idéalement ticker boursier, sinon ISIN ou mapping
@@ -291,12 +292,28 @@ rolling_max = cumulative.cummax()
 drawdown = (cumulative - rolling_max) / rolling_max
 max_drawdown = drawdown.min()
 st.write(f"Max Drawdown : {max_drawdown:.2%}")
-plt.figure(figsize=(10, 4))
-drawdown.plot(title="Drawdown du portefeuille", color="red")
-plt.axhline(max_drawdown, linestyle='--', color='black', label=f'Max DD: {max_drawdown:.2%}')
-plt.legend()
-plt.grid(True)
-st.pyplot(plt)
+import plotly.graph_objects as go
+
+fig_drawdown = go.Figure()
+
+# Ligne de drawdown
+fig_drawdown.add_trace(go.Scatter(
+    x=drawdown.index,
+    y=drawdown,
+    mode='lines',
+    name='Drawdown',
+    line=dict(color='red')
+))
+
+# Ligne horizontale du max drawdown
+fig_drawdown.add_hline(y=max_drawdown, line_dash="dash", line_color="black",
+                       annotation_text=f"Max DD: {max_drawdown:.2%}", annotation_position="bottom right")
+
+fig_drawdown.update_layout(title="Drawdown du portefeuille",
+                           yaxis_title="Drawdown (%)",
+                           xaxis_title="Date")
+st.plotly_chart(fig_drawdown)
+
 
 # Calcul des métriques (après votre code existant)
 weighted_returns = returns @ weights_vector

@@ -36,7 +36,7 @@ custom_css = """
 st.markdown(custom_css, unsafe_allow_html=True)
 
 
-st.("Your Data")
+st.title("Your Data")
 
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 

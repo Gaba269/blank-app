@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 import matplotlib.pyplot as plt
-
+import numpy as np
 custom_css = """
 <style>
 /* Change the background color of the main content area */
@@ -12,7 +12,7 @@ custom_css = """
 
 /* Change the background color of the sidebar (if any) */
 [data-testid="stSidebar"] {
-    background-color: #3830e1;  /* darker blue */
+    background-color: #ffffff;  /* darker blue */
 }
 
 /* Change the text color inside the app */

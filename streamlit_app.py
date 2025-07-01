@@ -36,7 +36,7 @@ custom_css = """
 st.markdown(custom_css, unsafe_allow_html=True)
 
 
-st.title("Your Data")
+st.("Your Data")
 
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
@@ -254,7 +254,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("Répartition")
-    fig_pie = px.pie(df, values='weight_pct', names='name', title=None, hole=0.3)
+    fig_pie = px.pie(df, values='weight_pct', names='name', =None, hole=0.3)
     fig_pie.update_layout(width=300, height=300, margin=dict(t=10, b=10, l=10, r=10))
     st.plotly_chart(fig_pie, use_container_width=False)
 
@@ -333,7 +333,7 @@ benchmark_return = 0.08  # Exemple : 8% annuel pour un indice
 information_ratio = (annual_return - benchmark_return) / annual_volatility
 
 st.write("_"*60)
-st.title("ANALYSE COMPLÈTE DU PORTEFEUILLE")
+st.("ANALYSE COMPLÈTE DU PORTEFEUILLE")
 st.write("_"*60)
 
 st.write(f"\n📊 MÉTRIQUES DE BASE:")
@@ -348,7 +348,7 @@ st.write(f"Ratio de Calmar         : {calmar_ratio:>8.3f}")
 st.write(f"Ratio d'Information     : {information_ratio:>8.3f}")
 
 st.write(f"\n" + "_"*60)
-st.Title("INTERPRÉTATION DES RÉSULTATS")
+st.title("INTERPRÉTATION DES RÉSULTATS")
 st.write("_"*60)
 
 # Analyse du ratio de Sharpe
@@ -408,7 +408,7 @@ st.write(f"   → Alpha généré : {(annual_return - benchmark_return)*100:.1f}
 
 # Recommandations
 st.write(f"\n" + "_"*60)
-st.Title("RECOMMANDATIONS STRATÉGIQUES")
+st.title("RECOMMANDATIONS STRATÉGIQUES")
 st.write("_"*60)
 
 if sharpe_ratio < 0.5:

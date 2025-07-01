@@ -1,4 +1,4 @@
-import streamlit as st
+%import streamlit as st
 import pandas as pd
 import yfinance as yf
 import matplotlib.pyplot as plt
@@ -259,7 +259,7 @@ with col1:
     st.plotly_chart(fig_pie, use_container_width=False)
 
 with col2:
-    st.subheader("Performance")
+    st.subheader("Performance (en %)")
     fig_bar = px.bar(df, x='name', y='perf', text='perf', color='perf', color_continuous_scale='Blues')
     fig_bar.update_layout(width=300, height=300, margin=dict(t=10), xaxis_tickangle=-45)
     st.plotly_chart(fig_bar, use_container_width=False)

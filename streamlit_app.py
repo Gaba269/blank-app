@@ -47,7 +47,7 @@ st.write(f"Valeur totale portefeuille : {total_value:.2f} EUR")
 df['weight'] = df['amount'] / total_value
 df['perf'] = (df['lastPrice'] - df['buyingPrice']) / df['buyingPrice'] * 100
 portfolio_perf = (df['weight'] * df['perf']).sum()
-print(f"Performance globale portefeuille : {portfolio_perf:.2f} %")
+st.write(f"Performance globale portefeuille : {portfolio_perf:.2f} %")
 
 # On calcule la répartition
 df['weight_pct'] = df['weight'] * 100
@@ -121,10 +121,10 @@ def get_ticker_from_isin(isin: str, api_key: Optional[str] = None) -> Optional[s
         return None
 
     except requests.exceptions.RequestException as e:
-        print(f"Erreur API pour ISIN {isin}: {e}")
+        st.write(f"Erreur API pour ISIN {isin}: {e}")
         return None
     except json.JSONDecodeError as e:
-        print(f"Erreur de décodage JSON pour ISIN {isin}: {e}")
+        st.write(f"Erreur de décodage JSON pour ISIN {isin}: {e}")
         return None
 
 def get_tickers_batch(isins: List[str], api_key: Optional[str] = None, batch_size: int = 10) -> Dict[str, str]:
@@ -185,12 +185,12 @@ def get_tickers_batch(isins: List[str], api_key: Optional[str] = None, batch_siz
                 time.sleep(1)  # Pause d'1 seconde entre les lots
 
         except requests.exceptions.RequestException as e:
-            print(f"Erreur API pour le lot {i//batch_size + 1}: {e}")
+            st.write(f"Erreur API pour le lot {i//batch_size + 1}: {e}")
             # Marquer tous les ISIN du lot comme non trouvés
             for isin in batch:
                 results[isin] = None
         except json.JSONDecodeError as e:
-            print(f"Erreur de décodage JSON pour le lot {i//batch_size + 1}: {e}")
+            st.write(f"Erreur de décodage JSON pour le lot {i//batch_size + 1}: {e}")
             for isin in batch:
                 results[isin] = None
 
@@ -214,7 +214,7 @@ def extract_tickers_from_dataframe(df: pd.DataFrame, api_key: Optional[str] = No
     # Récupérer la liste unique des ISIN
     unique_isins = df['isin'].dropna().unique().tolist()
 
-    print(f"Extraction des tickers pour {len(unique_isins)} ISIN uniques...")
+    st.write(f"Extraction des tickers pour {len(unique_isins)} ISIN uniques...")
 
     # Récupérer les tickers par lots
     isin_to_ticker = get_tickers_batch(unique_isins, api_key)
@@ -227,7 +227,7 @@ def extract_tickers_from_dataframe(df: pd.DataFrame, api_key: Optional[str] = No
     found_count = df_copy['Tickers'].notna().sum()
     total_count = len(df_copy)
 
-    print(f"Tickers trouvés: {found_count}/{total_count} ({found_count/total_count*100:.1f}%)")
+    st.write(f"Tickers trouvés: {found_count}/{total_count} ({found_count/total_count*100:.1f}%)")
 
     return df_copy
 
@@ -235,29 +235,29 @@ def extract_tickers_from_dataframe(df: pd.DataFrame, api_key: Optional[str] = No
 if __name__ == "__main__":
     # Exemple avec un DataFrame de test
 
-    print("DataFrame original:")
-    print(df)
-    print()
+    st.write("DataFrame original:")
+    st.write(df)
+    st.write()
 
     # Extraire les tickers (sans clé API pour cet exemple)
     # Pour utiliser avec une clé API: df_with_tickers = extract_tickers_from_dataframe(df, api_key="VOTRE_CLE_API")
     df = extract_tickers_from_dataframe(df)
 
-    print("DataFrame avec tickers:")
-    print(df)
+    st.write("DataFrame avec tickers:")
+    st.write(df)
 
 import pandas as pd
 import numpy as np
 
 # Valeur totale du portefeuille
 total_value = df['amount'].sum()
-print(f"Valeur totale portefeuille : {total_value:.2f} EUR")
+st.write(f"Valeur totale portefeuille : {total_value:.2f} EUR")
 
 # Performance pondérée
 df['weight'] = df['amount'] / total_value
 df['perf'] = (df['lastPrice'] - df['buyingPrice']) / df['buyingPrice'] * 100
 portfolio_perf = (df['weight'] * df['perf']).sum()
-print(f"Performance globale portefeuille : {portfolio_perf:.2f} %")
+st.write(f"Performance globale portefeuille : {portfolio_perf:.2f} %")
 
 # Répartition en %
 df['weight_pct'] = df['weight'] * 100
@@ -284,7 +284,7 @@ plt.show()
 tickers=df['Tickers'].tolist()
 # Exemple avec tickers boursiers (à adapter)
 prices = yf.download(tickers, period="1y")['Close']
-print(prices)
+st.write(prices)
 # Rendements journaliers
 returns = prices.pct_change().dropna()
 
@@ -307,7 +307,7 @@ cov_matrix = returns.cov() * 252
 portfolio_vol = np.sqrt(weights_vector.T @ cov_matrix @ weights_vector)
 
 # Affichage
-print(f"Volatilité annualisée portefeuille : {portfolio_vol:.4%}")
+st.write(f"Volatilité annualisée portefeuille : {portfolio_vol:.4%}")
 
 #MDD
 weighted_returns = (returns * weights).sum(axis=1)
@@ -316,7 +316,7 @@ cumulative = (1 + weighted_returns).cumprod()
 rolling_max = cumulative.cummax()
 drawdown = (cumulative - rolling_max) / rolling_max
 max_drawdown = drawdown.min()
-print(f"Max Drawdown : {max_drawdown:.2%}")
+st.write(f"Max Drawdown : {max_drawdown:.2%}")
 plt.figure(figsize=(10, 4))
 drawdown.plot(title="Drawdown du portefeuille", color="red")
 plt.axhline(max_drawdown, linestyle='--', color='black', label=f'Max DD: {max_drawdown:.2%}')
@@ -352,27 +352,27 @@ calmar_ratio = annual_return / max_drawdown if max_drawdown != 0 else np.inf
 benchmark_return = 0.08  # Exemple : 8% annuel pour un indice
 information_ratio = (annual_return - benchmark_return) / annual_volatility
 
-print("="*60)
-print("ANALYSE COMPLÈTE DU PORTEFEUILLE")
-print("="*60)
+st.write("="*60)
+st.write("ANALYSE COMPLÈTE DU PORTEFEUILLE")
+st.write("="*60)
 
-print(f"\n📊 MÉTRIQUES DE BASE:")
-print(f"Rendement annualisé     : {annual_return:>8.2%}")
-print(f"Volatilité annualisée   : {annual_volatility:>8.2%}")
-print(f"Drawdown maximum        : {max_drawdown:>8.2%}")
+st.write(f"\n📊 MÉTRIQUES DE BASE:")
+st.write(f"Rendement annualisé     : {annual_return:>8.2%}")
+st.write(f"Volatilité annualisée   : {annual_volatility:>8.2%}")
+st.write(f"Drawdown maximum        : {max_drawdown:>8.2%}")
 
-print(f"\n📈 RATIOS DE PERFORMANCE:")
-print(f"Ratio de Sharpe         : {sharpe_ratio:>8.3f}")
-print(f"Ratio de Sortino        : {sortino_ratio:>8.3f}")
-print(f"Ratio de Calmar         : {calmar_ratio:>8.3f}")
-print(f"Ratio d'Information     : {information_ratio:>8.3f}")
+st.write(f"\n📈 RATIOS DE PERFORMANCE:")
+st.write(f"Ratio de Sharpe         : {sharpe_ratio:>8.3f}")
+st.write(f"Ratio de Sortino        : {sortino_ratio:>8.3f}")
+st.write(f"Ratio de Calmar         : {calmar_ratio:>8.3f}")
+st.write(f"Ratio d'Information     : {information_ratio:>8.3f}")
 
-print(f"\n" + "="*60)
-print("INTERPRÉTATION DES RÉSULTATS")
-print("="*60)
+st.write(f"\n" + "="*60)
+st.write("INTERPRÉTATION DES RÉSULTATS")
+st.write("="*60)
 
 # Analyse du ratio de Sharpe
-print(f"\n🎯 RATIO DE SHARPE ({sharpe_ratio:.3f}):")
+st.write(f"\n🎯 RATIO DE SHARPE ({sharpe_ratio:.3f}):")
 if sharpe_ratio > 2:
     sharpe_eval = "EXCELLENT - Performance exceptionnelle ajustée du risque"
 elif sharpe_ratio > 1:
@@ -384,21 +384,21 @@ elif sharpe_ratio > 0:
 else:
     sharpe_eval = "NÉGATIF - Performance inférieure au taux sans risque"
 
-print(f"   → {sharpe_eval}")
-print(f"   → Pour chaque unité de risque, vous gagnez {sharpe_ratio:.3f} unités de rendement excédentaire")
+st.write(f"   → {sharpe_eval}")
+st.write(f"   → Pour chaque unité de risque, vous gagnez {sharpe_ratio:.3f} unités de rendement excédentaire")
 
 # Analyse du ratio de Sortino
-print(f"\n📉 RATIO DE SORTINO ({sortino_ratio:.3f}):")
+st.write(f"\n📉 RATIO DE SORTINO ({sortino_ratio:.3f}):")
 if sortino_ratio > sharpe_ratio:
     sortino_eval = "POSITIF - Vos pertes sont moins fréquentes que la volatilité globale"
 else:
     sortino_eval = "ATTENTION - Volatilité importante à la baisse"
 
-print(f"   → {sortino_eval}")
-print(f"   → Ratio {sortino_ratio/sharpe_ratio:.1f}x supérieur au Sharpe = {'faible asymétrie négative' if sortino_ratio/sharpe_ratio < 1.5 else 'forte asymétrie positive'}")
+st.write(f"   → {sortino_eval}")
+st.write(f"   → Ratio {sortino_ratio/sharpe_ratio:.1f}x supérieur au Sharpe = {'faible asymétrie négative' if sortino_ratio/sharpe_ratio < 1.5 else 'forte asymétrie positive'}")
 
 # Analyse du ratio de Calmar
-print(f"\n⬇️ RATIO DE CALMAR ({calmar_ratio:.3f}):")
+st.write(f"\n⬇️ RATIO DE CALMAR ({calmar_ratio:.3f}):")
 if calmar_ratio > 1:
     calmar_eval = "EXCELLENT - Rendement supérieur au pire drawdown"
 elif calmar_ratio > 0.5:
@@ -408,12 +408,12 @@ elif calmar_ratio > 0.2:
 else:
     calmar_eval = "FAIBLE - Drawdowns importants par rapport au rendement"
 
-print(f"   → {calmar_eval}")
-print(f"   → Votre pire période a généré {max_drawdown:.1%} de perte")
-print(f"   → Il faudrait {max_drawdown/annual_return:.1f} années au rendement actuel pour compenser")
+st.write(f"   → {calmar_eval}")
+st.write(f"   → Votre pire période a généré {max_drawdown:.1%} de perte")
+st.write(f"   → Il faudrait {max_drawdown/annual_return:.1f} années au rendement actuel pour compenser")
 
 # Analyse du ratio d'information
-print(f"\n📊 RATIO D'INFORMATION ({information_ratio:.3f}):")
+st.write(f"\n📊 RATIO D'INFORMATION ({information_ratio:.3f}):")
 if information_ratio > 0.5:
     info_eval = "EXCELLENT - Surperformance significative vs benchmark"
 elif information_ratio > 0:
@@ -423,45 +423,45 @@ elif information_ratio > -0.5:
 else:
     info_eval = "NÉGATIF - Sous-performance du marché"
 
-print(f"   → {info_eval}")
-print(f"   → Alpha généré : {(annual_return - benchmark_return)*100:.1f} points de base")
+st.write(f"   → {info_eval}")
+st.write(f"   → Alpha généré : {(annual_return - benchmark_return)*100:.1f} points de base")
 
 # Recommandations
-print(f"\n" + "="*60)
-print("🎯 RECOMMANDATIONS STRATÉGIQUES")
-print("="*60)
+st.write(f"\n" + "="*60)
+st.write("🎯 RECOMMANDATIONS STRATÉGIQUES")
+st.write("="*60)
 
 if sharpe_ratio < 0.5:
-    print("⚠️  RISQUE ÉLEVÉ:")
-    print("   • Considérez réduire l'exposition aux actifs les plus volatiles")
-    print("   • Augmentez la diversification sectorielle/géographique")
+    st.write("⚠️  RISQUE ÉLEVÉ:")
+    st.write("   • Considérez réduire l'exposition aux actifs les plus volatiles")
+    st.write("   • Augmentez la diversification sectorielle/géographique")
 
 if max_drawdown > 0.2:
-    print("⚠️  DRAWDOWN IMPORTANT:")
-    print("   • Implémentez une stratégie de stop-loss")
-    print("   • Considérez un rebalancement plus fréquent")
+    st.write("⚠️  DRAWDOWN IMPORTANT:")
+    st.write("   • Implémentez une stratégie de stop-loss")
+    st.write("   • Considérez un rebalancement plus fréquent")
 
 if sortino_ratio / sharpe_ratio < 1.2:
-    print("⚠️  ASYMÉTRIE NÉGATIVE:")
-    print("   • Vos pertes sont proportionnellement importantes")
-    print("   • Envisagez des stratégies de protection (puts, VIX)")
+    st.write("⚠️  ASYMÉTRIE NÉGATIVE:")
+    st.write("   • Vos pertes sont proportionnellement importantes")
+    st.write("   • Envisagez des stratégies de protection (puts, VIX)")
 
 if sharpe_ratio > 1 and calmar_ratio > 0.5:
-    print("✅ PORTEFEUILLE ÉQUILIBRÉ:")
-    print("   • Bonne gestion risque/rendement")
-    print("   • Maintenez votre stratégie actuelle")
+    st.write("✅ PORTEFEUILLE ÉQUILIBRÉ:")
+    st.write("   • Bonne gestion risque/rendement")
+    st.write("   • Maintenez votre stratégie actuelle")
 
 # Benchmark de l'industrie
-print(f"\n📈 COMPARAISON MARCHÉ:")
-print(f"   • Fonds indiciels      : Sharpe ~0.3-0.6")
-print(f"   • Gestion active       : Sharpe ~0.4-0.8")
-print(f"   • Hedge funds          : Sharpe ~0.6-1.2")
-print(f"   • Votre portefeuille   : Sharpe {sharpe_ratio:.3f}")
+st.write(f"\n📈 COMPARAISON MARCHÉ:")
+st.write(f"   • Fonds indiciels      : Sharpe ~0.3-0.6")
+st.write(f"   • Gestion active       : Sharpe ~0.4-0.8")
+st.write(f"   • Hedge funds          : Sharpe ~0.6-1.2")
+st.write(f"   • Votre portefeuille   : Sharpe {sharpe_ratio:.3f}")
 
 benchmark_category = "Sous-performant" if sharpe_ratio < 0.3 else \
                     "Marché passif" if sharpe_ratio < 0.6 else \
                     "Gestion active" if sharpe_ratio < 1.2 else "Elite"
-print(f"   → Classification : {benchmark_category}")
+st.write(f"   → Classification : {benchmark_category}")
 
 import yfinance as yf
 import pandas as pd
@@ -664,8 +664,8 @@ def download_comprehensive_indices(period="1y"):
     indices_data = {}
     failed_downloads = []
 
-    print(f"📈 TÉLÉCHARGEMENT DE {len(indices_tickers)} INDICES MONDIAUX:")
-    print("-" * 60)
+    st.write(f"📈 TÉLÉCHARGEMENT DE {len(indices_tickers)} INDICES MONDIAUX:")
+    st.write("-" * 60)
 
     for name, ticker in indices_tickers.items():
         try:
@@ -674,20 +674,20 @@ def download_comprehensive_indices(period="1y"):
                 returns = data['Close'].pct_change().dropna()
                 if len(returns) > 50:  # Minimum de données
                     indices_data[name] = returns
-                    print(f"✅ {name:<12} ({ticker:<12}) - {len(returns):>4} points")
+                    st.write(f"✅ {name:<12} ({ticker:<12}) - {len(returns):>4} points")
                 else:
                     failed_downloads.append((name, "Données insuffisantes"))
-                    print(f"⚠️  {name:<12} ({ticker:<12}) - Données insuffisantes")
+                    st.write(f"⚠️  {name:<12} ({ticker:<12}) - Données insuffisantes")
             else:
                 failed_downloads.append((name, "Données vides"))
-                print(f"❌ {name:<12} ({ticker:<12}) - Échec téléchargement")
+                st.write(f"❌ {name:<12} ({ticker:<12}) - Échec téléchargement")
         except Exception as e:
             failed_downloads.append((name, str(e)[:30]))
-            print(f"❌ {name:<12} ({ticker:<12}) - Erreur: {str(e)[:30]}")
+            st.write(f"❌ {name:<12} ({ticker:<12}) - Erreur: {str(e)[:30]}")
 
-    print(f"\n✅ {len(indices_data)} indices téléchargés avec succès")
+    st.write(f"\n✅ {len(indices_data)} indices téléchargés avec succès")
     if failed_downloads:
-        print(f"❌ {len(failed_downloads)} échecs: {[x[0] for x in failed_downloads]}")
+        st.write(f"❌ {len(failed_downloads)} échecs: {[x[0] for x in failed_downloads]}")
 
     return indices_data
 
@@ -741,7 +741,7 @@ def calculate_comprehensive_betas(returns, indices_data, index_mapping, weights_
                         break
 
         if not beta_calculated:
-            print(f"⚠️  Impossible de calculer le beta pour {ticker} ({primary_index})")
+            st.write(f"⚠️  Impossible de calculer le beta pour {ticker} ({primary_index})")
 
     return betas_results, fallback_used
 
@@ -776,31 +776,31 @@ def _calculate_single_beta(stock_returns, index_returns, ticker, index_name):
         }
 
     except Exception as e:
-        print(f"❌ Erreur calcul beta {ticker}: {str(e)}")
+        st.write(f"❌ Erreur calcul beta {ticker}: {str(e)}")
         return None
 
 # 4. EXECUTION PRINCIPALE
-print("🌍 ANALYSE MONDIALE DES BÊTAS")
-print("=" * 60)
+st.write("🌍 ANALYSE MONDIALE DES BÊTAS")
+st.write("=" * 60)
 
 # Mapping complet
 tickers = df['Tickers'].tolist()
 index_mapping = get_comprehensive_index_mapping(tickers)
 
-print(f"\n📊 MAPPING AUTOMATIQUE COMPLET:")
-print("-" * 40)
+st.write(f"\n📊 MAPPING AUTOMATIQUE COMPLET:")
+st.write("-" * 40)
 mapping_stats = {}
 for ticker, index in index_mapping.items():
     region = 'Europe' if index in ['CAC', 'FTSE', 'DAX', 'FTSE_MIB', 'IBEX', 'SMI'] else \
              'USA' if index in ['NASDAQ', 'NYSE', 'SP500'] else \
              'Asie' if index in ['NIKKEI', 'HSI', 'KOSPI'] else 'Autres'
 
-    print(f"   {ticker:>12} → {index:<12} ({region})")
+    st.write(f"   {ticker:>12} → {index:<12} ({region})")
     mapping_stats[region] = mapping_stats.get(region, 0) + 1
 
-print(f"\n📈 RÉPARTITION GÉOGRAPHIQUE:")
+st.write(f"\n📈 RÉPARTITION GÉOGRAPHIQUE:")
 for region, count in mapping_stats.items():
-    print(f"   {region:<10}: {count:>2} actions ({count/len(tickers)*100:.1f}%)")
+    st.write(f"   {region:<10}: {count:>2} actions ({count/len(tickers)*100:.1f}%)")
 
 # Téléchargement des indices
 indices_data = download_comprehensive_indices("1y")
@@ -811,11 +811,11 @@ betas_results, fallback_used = calculate_comprehensive_betas(
 )
 
 # 5. AFFICHAGE DÉTAILLÉ
-print(f"\n" + "=" * 80)
-print("📊 BÊTAS INDIVIDUELS DÉTAILLÉS")
-print("=" * 80)
-print(f"{'Ticker':<10} {'Indice':<12} {'Beta':<8} {'Alpha':<9} {'R²':<8} {'Obs':<5} {'Poids':<8} {'Note'}")
-print("-" * 80)
+st.write(f"\n" + "=" * 80)
+st.write("📊 BÊTAS INDIVIDUELS DÉTAILLÉS")
+st.write("=" * 80)
+st.write(f"{'Ticker':<10} {'Indice':<12} {'Beta':<8} {'Alpha':<9} {'R²':<8} {'Obs':<5} {'Poids':<8} {'Note'}")
+st.write("-" * 80)
 
 total_beta_weighted = 0
 coverage = len(betas_results) / len(tickers)
@@ -843,43 +843,42 @@ for ticker, data in betas_results.items():
     region_stats[region]['beta_weighted'] += beta_contribution
     region_stats[region]['count'] += 1
 
-    print(f"{ticker:<10} {data['index']:<12} {data['beta']:<8.3f} "
+    st.write(f"{ticker:<10} {data['index']:<12} {data['beta']:<8.3f} "
           f"{data['alpha']:<9.4f} {data['r_squared']:<8.3f} "
           f"{data['observations']:<5} {data['weight']:<8.2%} {note}{fallback_marker}")
 
-print("-" * 80)
-print(f"BETA PORTEFEUILLE GLOBAL : {total_beta_weighted:.3f}")
-print(f"COUVERTURE DE L'ANALYSE  : {coverage:.1%} ({len(betas_results)}/{len(tickers)} actions)")
+st.write("-" * 80)
+st.write(f"BETA PORTEFEUILLE GLOBAL : {total_beta_weighted:.3f}")
+st.write(f"COUVERTURE DE L'ANALYSE  : {coverage:.1%} ({len(betas_results)}/{len(tickers)} actions)")
 
 # Fallbacks utilisés
 if fallback_used:
-    print(f"\n⚠️  INDICES DE SUBSTITUTION UTILISÉS:")
+    st.write(f"\n⚠️  INDICES DE SUBSTITUTION UTILISÉS:")
     for ticker, substitution in fallback_used.items():
-        print(f"   {ticker}: {substitution}")
+        st.write(f"   {ticker}: {substitution}")
 
 # 6. ANALYSE PAR RÉGION
-print(f"\n" + "=" * 60)
-print("🌍 ANALYSE PAR RÉGION")
-print("=" * 60)
+st.write(f"\n" + "=" * 60)
+st.write("🌍 ANALYSE PAR RÉGION")
+st.write("=" * 60)
 
 for region, stats in region_stats.items():
     avg_beta = stats['beta_weighted'] / stats['weight'] if stats['weight'] > 0 else 0
-    print(f"{region:<10}: {stats['weight']:<8.1%} | Beta {avg_beta:<6.3f} | {stats['count']:>2} actions")
+    st.write(f"{region:<10}: {stats['weight']:<8.1%} | Beta {avg_beta:<6.3f} | {stats['count']:>2} actions")
 
 
-print(f"\n🎯 RECOMMANDATIONS FINALES:")
+st.write(f"\n🎯 RECOMMANDATIONS FINALES:")
 if total_beta_weighted > 1.3:
-    print("⚠️  Portefeuille très risqué - Considérez des actifs défensifs")
+    st.write("⚠️  Portefeuille très risqué - Considérez des actifs défensifs")
 elif total_beta_weighted < 0.7:
-    print("💤 Portefeuille peu risqué - Potentiel de rendement limité")
+    st.write("💤 Portefeuille peu risqué - Potentiel de rendement limité")
 else:
-    print("✅ Niveau de risque équilibré pour un portefeuille diversifié")
+    st.write("✅ Niveau de risque équilibré pour un portefeuille diversifié")
 
 if coverage < 0.8:
-    print(f"⚠️  Couverture incomplète ({coverage:.1%}) - Vérifiez les tickers manquants")
+    st.write(f"⚠️  Couverture incomplète ({coverage:.1%}) - Vérifiez les tickers manquants")
 
 #rajouter la diversification
 #type d'actif et concentration
-
 
 

@@ -12,7 +12,7 @@ custom_css = """
 
 /* Change the background color of the sidebar (if any) */
 [data-testid="stSidebar"] {
-    background-color: #ffffff;  /* darker blue */
+    background-color: #d4e2ff;  /* darker blue */
 }
 
 /* Change the text color inside the app */

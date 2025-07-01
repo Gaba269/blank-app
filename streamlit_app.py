@@ -240,7 +240,7 @@ df['weight_pct'] = df['weight'] * 100
 tickers=df['Tickers'].tolist()
 # Exemple avec tickers boursiers (à adapter)
 prices = yf.download(tickers, period="1y")['Close']
-st.write(prices)
+
 # Rendements journaliers
 returns = prices.pct_change().dropna()
 
@@ -280,7 +280,7 @@ cov_matrix = returns.cov() * 252
 portfolio_vol = np.sqrt(weights_vector.T @ cov_matrix @ weights_vector)
 
 # Affichage
-st.write(f"Volatilité annualisée portefeuille : {portfolio_vol:.4%}")
+st.success(f"Volatilité annualisée portefeuille : {portfolio_vol:.4%}")
 
 #MDD
 weighted_returns = (returns * weights).sum(axis=1)
@@ -289,7 +289,7 @@ cumulative = (1 + weighted_returns).cumprod()
 rolling_max = cumulative.cummax()
 drawdown = (cumulative - rolling_max) / rolling_max
 max_drawdown = drawdown.min()
-st.write(f"Max Drawdown : {max_drawdown:.2%}")
+st.success(f"Max Drawdown : {max_drawdown:.2%}")
 
 
     

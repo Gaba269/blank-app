@@ -43,6 +43,46 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     st.write("Data preview:")
     st.dataframe(df)
+import streamlit as st
+import plotly.express as px
+import plotly.graph_objects as go
+
+# Exemple DataFrame
+import pandas as pd
+df = pd.DataFrame({
+    'name': ['A', 'B', 'C'],
+    'weight_pct': [40, 30, 30],
+    'perf': [5.2, -3.1, 2.8]
+})
+
+# Exemple drawdown
+drawdown = pd.Series([-0.01, -0.05, -0.02, -0.07], name="Drawdown")
+drawdown.index = pd.date_range("2024-01-01", periods=4)
+max_drawdown = drawdown.min()
+
+# Layout : 3 colonnes
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.subheader("Répartition")
+    fig_pie = px.pie(df, values='weight_pct', names='name', title=None, hole=0.3)
+    fig_pie.update_layout(width=300, height=300, margin=dict(t=10, b=10, l=10, r=10))
+    st.plotly_chart(fig_pie, use_container_width=False)
+
+with col2:
+    st.subheader("Performance")
+    fig_bar = px.bar(df, x='name', y='perf', text='perf', color='perf', color_continuous_scale='Blues')
+    fig_bar.update_layout(width=300, height=300, margin=dict(t=10), xaxis_tickangle=-45)
+    st.plotly_chart(fig_bar, use_container_width=False)
+
+with col3:
+    st.subheader("Drawdown")
+    fig_drawdown = go.Figure()
+    fig_drawdown.add_trace(go.Scatter(x=drawdown.index, y=drawdown, line=dict(color='red'), name="Drawdown"))
+    fig_drawdown.add_hline(y=max_drawdown, line_dash="dash", line_color="black",
+                           annotation_text=f"Max DD: {max_drawdown:.2%}")
+    fig_drawdown.update_layout(width=300, height=300, margin=dict(t=10), showlegend=False)
+    st.plotly_chart(fig_drawdown, use_container_width=False)
 
 
 

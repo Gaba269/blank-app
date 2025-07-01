@@ -3,3 +3,9 @@ yfinance
 matplotlib
 pandas
 numpy
+requests
+json
+time
+typing
+sklearn.linear_model
+re

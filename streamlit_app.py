@@ -38,27 +38,39 @@ st.markdown(custom_css, unsafe_allow_html=True)
 
 st.title("Upload your CSV File")
 
-uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+#uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+#if uploaded_file is not None:
+#    df = pd.read_csv(uploaded_file)
+ #   st.write("Data preview:")
+  #  st.dataframe(df)
+
+uploaded_file = st.file_uploader("Importer un fichier CSV", type="csv")
 
 if uploaded_file is not None:
+    # Lire le CSV dans un DataFrame
     df = pd.read_csv(uploaded_file)
-    st.write("Data preview:")
-    st.dataframe(df)
+    st.session_state.df = df  # stocker dans session_state
 
-st.session_state.df=df
+# Afficher et manipuler uniquement si df existe dans session_state
+if 'df' in st.session_state:
+    st.write("DataFrame chargé :")
+    st.dataframe(st.session_state.df)
 
-name = st.text_input("Nom")
-quantity = st.number_input("Quantité", min_value=0.0, step=1.0)
-buyingPrice = st.number_input("Prix d'achat", min_value=0.0, step=0.01)
-lastPrice = st.number_input("Dernier prix", min_value=0.0, step=0.01)
+    # Exemple d’ajout de ligne (à adapter)
+    name = st.text_input("Nom")
+    quantity = st.number_input("Quantité", min_value=0.0, step=1.0)
+    buyingPrice = st.number_input("Prix d'achat", min_value=0.0, step=0.01)
+    lastPrice = st.number_input("Dernier prix", min_value=0.0, step=0.01)
 
-if st.button("Ajouter une ligne"):
-    new_row = {'name': name, 'quantity': quantity, 'buyingPrice': buyingPrice, 'lastPrice': lastPrice}
-    st.session_state.df = pd.concat([st.session_state.df, pd.DataFrame([new_row])], ignore_index=True)
-    st.success("Ligne ajoutée !")
+    if st.button("Ajouter une ligne"):
+        new_row = {'name': name, 'quantity': quantity, 'buyingPrice': buyingPrice, 'lastPrice': lastPrice}
+        st.session_state.df = pd.concat([st.session_state.df, pd.DataFrame([new_row])], ignore_index=True)
+        st.success("Ligne ajoutée !")
+        st.experimental_rerun()  # pour rafraîchir l'affichage
 
-st.write("DataFrame mis à jour :")
-st.dataframe(st.session_state.df)
+    st.write("DataFrame mis à jour :")
+    st.dataframe(st.session_state.df)
 
 import pandas as pd
 import requests

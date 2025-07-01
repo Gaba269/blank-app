@@ -39,35 +39,7 @@ if uploaded_file is not None:
     st.write("Data preview:")
     st.dataframe(df)
 
-#On calcule la val tot
-total_value = df['amount'].sum()
-st.write(f"Valeur totale portefeuille : {total_value:.2f} EUR")
 
-#On calcule la perf
-df['weight'] = df['amount'] / total_value
-df['perf'] = (df['lastPrice'] - df['buyingPrice']) / df['buyingPrice'] * 100
-portfolio_perf = (df['weight'] * df['perf']).sum()
-st.write(f"Performance globale portefeuille : {portfolio_perf:.2f} %")
-
-# On calcule la répartition
-df['weight_pct'] = df['weight'] * 100
-
-# on crée un camembert
-plt.figure(figsize=(7,7))
-plt.pie(df['weight_pct'], labels=df['name'], autopct='%1.1f%%')
-plt.title("Répartition du portefeuille")
-plt.show()
-
-# barre avec les perfs de chaque actif
-
-colors = np.where(df['perf'] >= 0, 'green', 'red')
-
-plt.figure(figsize=(10,5))
-plt.bar(df['name'], df['perf'], color=colors)
-plt.xticks(rotation=45, ha='right')
-plt.ylabel("Performance en %")
-plt.title("Performance par actif")
-plt.show()
 
 import pandas as pd
 import requests
@@ -251,7 +223,7 @@ import numpy as np
 
 # Valeur totale du portefeuille
 total_value = df['amount'].sum()
-st.write(f"Valeur totale portefeuille : {total_value:.2f} EUR")
+st.success(f"Valeur totale portefeuille : {total_value:.2f} EUR")
 
 # Performance pondérée
 df['weight'] = df['amount'] / total_value

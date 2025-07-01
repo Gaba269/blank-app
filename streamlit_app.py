@@ -249,7 +249,7 @@ name_to_ticker = dict(zip(df['name'], df['Tickers']))
 #On arrondit
 df['perf'] = df['perf'].round(2) 
 
-# Layout : 3 colonnes
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -292,14 +292,16 @@ max_drawdown = drawdown.min()
 st.success(f"Max Drawdown : {max_drawdown:.2%}")
 
 
-    
-st.subheader("Drawdown")
-fig_drawdown = go.Figure()
-fig_drawdown.add_trace(go.Scatter(x=drawdown.index, y=drawdown, line=dict(color='red'), name="Drawdown"))
-fig_drawdown.add_hline(y=max_drawdown, line_dash="dash", line_color="black",
+ col1, col2, col3 = st.columns(3)
+
+with col2:   
+    st.subheader("Drawdown")
+    fig_drawdown = go.Figure()
+    fig_drawdown.add_trace(go.Scatter(x=drawdown.index, y=drawdown, line=dict(color='red'), name="Drawdown"))
+    fig_drawdown.add_hline(y=max_drawdown, line_dash="dash", line_color="black",
                        annotation_text=f"Max DD: {max_drawdown:.2%}")
-fig_drawdown.update_layout(width=300, height=300, margin=dict(t=10), showlegend=False)
-st.plotly_chart(fig_drawdown, use_container_width=False)
+    fig_drawdown.update_layout(width=300, height=300, margin=dict(t=10), showlegend=False)
+    st.plotly_chart(fig_drawdown, use_container_width=False)
 
 
 

@@ -45,6 +45,20 @@ if uploaded_file is not None:
     st.write("Data preview:")
     st.dataframe(df)
 
+name = st.text_input("Nom")
+quantity = st.number_input("Quantité", min_value=0.0, step=1.0)
+buyingPrice = st.number_input("Prix d'achat", min_value=0.0, step=0.01)
+lastPrice = st.number_input("Dernier prix", min_value=0.0, step=0.01)
+
+# Bouton pour ajouter la ligne
+if st.button("Ajouter une ligne"):
+    new_row = {'name': name, 'quantity': quantity, 'buyingPrice': buyingPrice, 'lastPrice': lastPrice}
+    st.session_state.df = st.session_state.df.append(new_row, ignore_index=True)
+    st.success("Ligne ajoutée !")
+
+st.write("DataFrame mis à jour :")
+st.dataframe(st.session_state.df)
+
 import pandas as pd
 import requests
 import json

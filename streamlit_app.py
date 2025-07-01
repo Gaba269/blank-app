@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
+import yfinance as yf
 
-st.title("CSV Uploader Example")
+st.title("Upload your CSV File")
 
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 

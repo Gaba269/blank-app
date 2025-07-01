@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import streamlit as st
-import plotly.express as px
+import plotly.express as px 
 import plotly.graph_objects as go
 sns.set_style("darkgrid") 
 

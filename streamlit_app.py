@@ -45,33 +45,70 @@ st.title("Upload your CSV File")
  #   st.write("Data preview:")
   #  st.dataframe(df)
 
-uploaded_file = st.file_uploader("Importer un fichier CSV", type="csv")
+import streamlit as st
+import yfinance as yf
+import pandas as pd
+import requests
+import io
 
-if uploaded_file is not None:
-    # Lire le CSV dans un DataFrame
+st.title("📊 Simulateur de Portefeuille")
+
+# 1. Chargement du fichier CSV utilisateur
+st.header("1. Importer votre portefeuille")
+uploaded_file = st.file_uploader("Déposez un fichier CSV", type=["csv"])
+
+if uploaded_file:
     df = pd.read_csv(uploaded_file)
-    st.session_state.df = df  # stocker dans session_state
+    st.subheader("📄 Portefeuille actuel")
+    st.dataframe(df)
 
-# Afficher et manipuler uniquement si df existe dans session_state
-if 'df' in st.session_state:
-    st.write("DataFrame chargé :")
-    st.dataframe(st.session_state.df)
+    # 2. Recherche dynamique d'une action
+    st.header("2. Ajouter une action (simulation)")
 
-    # Exemple d’ajout de ligne (à adapter)
-    name = st.text_input("Nom")
-    quantity = st.number_input("Quantité", min_value=0.0, step=1.0)
-    buyingPrice = st.number_input("Prix d'achat", min_value=0.0, step=0.01)
-    lastPrice = st.number_input("Dernier prix", min_value=0.0, step=0.01)
+    query = st.text_input("🔍 Rechercher une action (nom ou symbole)", "")
 
-    if st.button("Ajouter une ligne"):
-        new_row = {'name': name, 'quantity': quantity, 'buyingPrice': buyingPrice, 'lastPrice': lastPrice}
-        st.session_state.df = pd.concat([st.session_state.df, pd.DataFrame([new_row])], ignore_index=True)
-        st.success("Ligne ajoutée !")
-      
+    if query:
+        url = f"https://query2.finance.yahoo.com/v1/finance/search?q={query}"
+        r = requests.get(url)
+        data = r.json()
+        results = data.get("quotes", [])
 
-    st.write("DataFrame mis à jour :")
-    st.dataframe(st.session_state.df)
-df=st.session_state.df
+        if results:
+            options = [f"{item['symbol']} - {item['shortname']}" for item in results if 'shortname' in item]
+            selected = st.selectbox("Sélectionnez une action à ajouter :", options)
+
+            if selected:
+                symbol = selected.split(" - ")[0]
+                stock = yf.Ticker(symbol)
+                info = stock.info
+
+                last_price = info.get("currentPrice", None)
+                name = info.get("shortName", symbol)
+                isin = info.get("isin", "UNKNOWN")
+
+                if last_price:
+                    quantity = st.number_input("Quantité à ajouter", min_value=1, value=1)
+                    if st.button("➕ Ajouter au portefeuille (simulation)"):
+                        new_row = {
+                            "name": name,
+                            "isin": isin,
+                            "quantity": quantity,
+                            "buyingPrice": last_price,
+                            "lastPrice": last_price,
+                            "intradayVariation": 0.0,
+                            "amount": quantity * last_price,
+                            "amountVariation": 0.0,
+                            "variation": 0.0
+                        }
+                        df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+                        st.success(f"✅ {name} a été ajouté à votre portefeuille simulé.")
+                        st.subheader("📊 Nouveau portefeuille simulé")
+                        st.dataframe(df)
+                else:
+                    st.warning("Données financières indisponibles.")
+        else:
+            st.warning("Aucune action trouvée.")
+
 import pandas as pd
 import requests
 import json

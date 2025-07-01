@@ -36,7 +36,7 @@ custom_css = """
 st.markdown(custom_css, unsafe_allow_html=True)
 
 
-st.title("Upload your CSV File")
+st.title("Your Data")
 
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
@@ -299,7 +299,7 @@ with col2:
     fig_drawdown.add_trace(go.Scatter(x=drawdown.index, y=drawdown, line=dict(color='red'), name="Drawdown"))
     fig_drawdown.add_hline(y=max_drawdown, line_dash="dash", line_color="black",
                        annotation_text=f"Max DD: {max_drawdown:.2%}")
-    fig_drawdown.update_layout(width=300, height=300, margin=dict(t=10), showlegend=False)
+    fig_drawdown.update_layout(width=500, height=500, margin=dict(t=10), showlegend=False)
     st.plotly_chart(fig_drawdown, use_container_width=False)
 
 
@@ -332,9 +332,9 @@ calmar_ratio = annual_return / max_drawdown if max_drawdown != 0 else np.inf
 benchmark_return = 0.08  # Exemple : 8% annuel pour un indice
 information_ratio = (annual_return - benchmark_return) / annual_volatility
 
-st.write("="*60)
-st.write("ANALYSE COMPLÈTE DU PORTEFEUILLE")
-st.write("="*60)
+st.write("_"*60)
+st.title("ANALYSE COMPLÈTE DU PORTEFEUILLE")
+st.write("_"*60)
 
 st.write(f"\n📊 MÉTRIQUES DE BASE:")
 st.write(f"Rendement annualisé     : {annual_return:>8.2%}")
@@ -347,9 +347,9 @@ st.write(f"Ratio de Sortino        : {sortino_ratio:>8.3f}")
 st.write(f"Ratio de Calmar         : {calmar_ratio:>8.3f}")
 st.write(f"Ratio d'Information     : {information_ratio:>8.3f}")
 
-st.write(f"\n" + "="*60)
-st.write("INTERPRÉTATION DES RÉSULTATS")
-st.write("="*60)
+st.write(f"\n" + "_"*60)
+st.Title("INTERPRÉTATION DES RÉSULTATS")
+st.write("_"*60)
 
 # Analyse du ratio de Sharpe
 st.write(f"\n🎯 RATIO DE SHARPE ({sharpe_ratio:.3f}):")
@@ -407,9 +407,9 @@ st.write(f"   → {info_eval}")
 st.write(f"   → Alpha généré : {(annual_return - benchmark_return)*100:.1f} points de base")
 
 # Recommandations
-st.write(f"\n" + "="*60)
-st.write("🎯 RECOMMANDATIONS STRATÉGIQUES")
-st.write("="*60)
+st.write(f"\n" + "_"*60)
+st.Title("RECOMMANDATIONS STRATÉGIQUES")
+st.write("_"*60)
 
 if sharpe_ratio < 0.5:
     st.write("⚠️  RISQUE ÉLEVÉ:")

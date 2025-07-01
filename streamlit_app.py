@@ -233,24 +233,6 @@ st.success(f"Performance globale portefeuille : {portfolio_perf:.2f} %")
 # Répartition en %
 df['weight_pct'] = df['weight'] * 100
 
-# Graphique camembert
-import plotly.express as px
-
-fig_pie = px.pie(df, values='weight_pct', names='name', title='Répartition du portefeuille',
-                 hole=0.3)  # donut style (optionnel)
-st.plotly_chart(fig_pie)
-
-
-# Graphique barres performance
-
-
-colors = np.where(df['perf'] >= 0, 'green', 'red')
-
-fig_bar = px.bar(df, x='name', y='perf', text='perf', title="Performance par actif",
-                 color='perf', color_continuous_scale='Blues')  # ou autre palette
-
-fig_bar.update_layout(xaxis_tickangle=-45, yaxis_title="Performance en %")
-st.plotly_chart(fig_bar)
 
 
 
@@ -264,6 +246,23 @@ returns = prices.pct_change().dropna()
 
 # Création du mapping name -> ticker (ex : 'APPLE INC' -> 'AAPL')
 name_to_ticker = dict(zip(df['name'], df['Tickers']))
+#On arrondit
+df['perf'] = df['perf'].round(2) 
+
+# Layout : 3 colonnes
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader("Répartition")
+    fig_pie = px.pie(df, values='weight_pct', names='name', title=None, hole=0.3)
+    fig_pie.update_layout(width=300, height=300, margin=dict(t=10, b=10, l=10, r=10))
+    st.plotly_chart(fig_pie, use_container_width=False)
+
+with col2:
+    st.subheader("Performance")
+    fig_bar = px.bar(df, x='name', y='perf', text='perf', color='perf', color_continuous_scale='Blues')
+    fig_bar.update_layout(width=300, height=300, margin=dict(t=10), xaxis_tickangle=-45)
+    st.plotly_chart(fig_bar, use_container_width=False)
 
 # Création de la Series des poids avec index = name
 weights_named = df.set_index('name')['weight']
@@ -291,51 +290,16 @@ rolling_max = cumulative.cummax()
 drawdown = (cumulative - rolling_max) / rolling_max
 max_drawdown = drawdown.min()
 st.write(f"Max Drawdown : {max_drawdown:.2%}")
-import plotly.graph_objects as go
 
+
+    
+st.subheader("Drawdown")
 fig_drawdown = go.Figure()
-
-# Ligne de drawdown
-fig_drawdown.add_trace(go.Scatter(
-    x=drawdown.index,
-    y=drawdown,
-    mode='lines',
-    name='Drawdown',
-    line=dict(color='red')
-))
-
-# Ligne horizontale du max drawdown
+fig_drawdown.add_trace(go.Scatter(x=drawdown.index, y=drawdown, line=dict(color='red'), name="Drawdown"))
 fig_drawdown.add_hline(y=max_drawdown, line_dash="dash", line_color="black",
-                       annotation_text=f"Max DD: {max_drawdown:.2%}", annotation_position="bottom right")
-
-fig_drawdown.update_layout(title="Drawdown du portefeuille",
-                           yaxis_title="Drawdown (%)",
-                           xaxis_title="Date")
-st.plotly_chart(fig_drawdown)
-
-# Layout : 3 colonnes
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.subheader("Répartition")
-    fig_pie = px.pie(df, values='weight_pct', names='name', title=None, hole=0.3)
-    fig_pie.update_layout(width=300, height=300, margin=dict(t=10, b=10, l=10, r=10))
-    st.plotly_chart(fig_pie, use_container_width=False)
-
-with col2:
-    st.subheader("Performance")
-    fig_bar = px.bar(df, x='name', y='perf', text='perf', color='perf', color_continuous_scale='Blues')
-    fig_bar.update_layout(width=300, height=300, margin=dict(t=10), xaxis_tickangle=-45)
-    st.plotly_chart(fig_bar, use_container_width=False)
-
-with col3:
-    st.subheader("Drawdown")
-    fig_drawdown = go.Figure()
-    fig_drawdown.add_trace(go.Scatter(x=drawdown.index, y=drawdown, line=dict(color='red'), name="Drawdown"))
-    fig_drawdown.add_hline(y=max_drawdown, line_dash="dash", line_color="black",
-                           annotation_text=f"Max DD: {max_drawdown:.2%}")
-    fig_drawdown.update_layout(width=300, height=300, margin=dict(t=10), showlegend=False)
-    st.plotly_chart(fig_drawdown, use_container_width=False)
+                       annotation_text=f"Max DD: {max_drawdown:.2%}")
+fig_drawdown.update_layout(width=300, height=300, margin=dict(t=10), showlegend=False)
+st.plotly_chart(fig_drawdown, use_container_width=False)
 
 
 

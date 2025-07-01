@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 import matplotlib as plt
+[theme]
+base="dark"
+primaryColor="deepblue"
+
 st.title("Upload your CSV File")
 
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
@@ -13,7 +17,7 @@ if uploaded_file is not None:
 
 #On calcule la val tot
 total_value = df['amount'].sum()
-print(f"Valeur totale portefeuille : {total_value:.2f} EUR")
+st.write(f"Valeur totale portefeuille : {total_value:.2f} EUR")
 
 #On calcule la perf
 df['weight'] = df['amount'] / total_value

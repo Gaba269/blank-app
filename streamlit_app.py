@@ -229,7 +229,7 @@ st.success(f"Valeur totale portefeuille : {total_value:.2f} EUR")
 df['weight'] = df['amount'] / total_value
 df['perf'] = (df['lastPrice'] - df['buyingPrice']) / df['buyingPrice'] * 100
 portfolio_perf = (df['weight'] * df['perf']).sum()
-st.write(f"Performance globale portefeuille : {portfolio_perf:.2f} %")
+st.success(f"Performance globale portefeuille : {portfolio_perf:.2f} %")
 
 # Répartition en %
 df['weight_pct'] = df['weight'] * 100
@@ -238,7 +238,8 @@ df['weight_pct'] = df['weight'] * 100
 plt.figure(figsize=(7,7))
 plt.pie(df['weight_pct'], labels=df['name'], autopct='%1.1f%%')
 plt.title("Répartition du portefeuille")
-plt.show()
+st.pyplot(plt)
+
 
 # Graphique barres performance
 
@@ -250,7 +251,8 @@ plt.bar(df['name'], df['perf'], color=colors)
 plt.xticks(rotation=45, ha='right')
 plt.ylabel("Performance en %")
 plt.title("Performance par actif")
-plt.show()
+st.pyplot(plt)
+
 
 # ici, idéalement ticker boursier, sinon ISIN ou mapping
 tickers=df['Tickers'].tolist()
@@ -294,7 +296,7 @@ drawdown.plot(title="Drawdown du portefeuille", color="red")
 plt.axhline(max_drawdown, linestyle='--', color='black', label=f'Max DD: {max_drawdown:.2%}')
 plt.legend()
 plt.grid(True)
-plt.show()
+st.pyplot(plt)()
 
 # Calcul des métriques (après votre code existant)
 weighted_returns = returns @ weights_vector

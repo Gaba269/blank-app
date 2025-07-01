@@ -2,9 +2,16 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 import matplotlib as plt
-[theme]
-base="dark"
-primaryColor="deepblue"
+page_style = """
+<style>
+body {
+    background-color: #0000FF;  /* blue background */
+    color: #00008B;             /* deep blue text */
+}
+</style>
+"""
+
+st.markdown(page_style, unsafe_allow_html=True)
 
 st.title("Upload your CSV File")
 

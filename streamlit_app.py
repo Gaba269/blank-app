@@ -6,7 +6,7 @@ custom_css = """
 <style>
 /* Change the background color of the main content area */
 [data-testid="stAppViewContainer"] {
-    background-color: #0000FF;  /* blue */
+    background-color: #000000;  /* blue */
 }
 
 /* Change the background color of the sidebar (if any) */

@@ -6,4 +6,5 @@ numpy
 seaborn
 requests
 scikit-learn
+plotly
 

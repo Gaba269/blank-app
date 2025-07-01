@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import yfinance as yf
-
+import matplotlib as plt
 st.title("Upload your CSV File")
 
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])

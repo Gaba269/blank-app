@@ -67,7 +67,7 @@ if 'df' in st.session_state:
         new_row = {'name': name, 'quantity': quantity, 'buyingPrice': buyingPrice, 'lastPrice': lastPrice}
         st.session_state.df = pd.concat([st.session_state.df, pd.DataFrame([new_row])], ignore_index=True)
         st.success("Ligne ajoutée !")
-        st.experimental_rerun()  # pour rafraîchir l'affichage
+      
 
     st.write("DataFrame mis à jour :")
     st.dataframe(st.session_state.df)

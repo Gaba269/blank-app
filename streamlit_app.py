@@ -2,16 +2,32 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 import matplotlib as plt
-page_style = """
+custom_css = """
 <style>
-body {
-    background-color: #0000FF;  /* blue background */
-    color: #00008B;             /* deep blue text */
+/* Change the background color of the main content area */
+[data-testid="stAppViewContainer"] {
+    background-color: #0000FF;  /* blue */
+}
+
+/* Change the background color of the sidebar (if any) */
+[data-testid="stSidebar"] {
+    background-color: #0000AA;  /* darker blue */
+}
+
+/* Change the text color inside the app */
+[data-testid="stAppViewContainer"] p, 
+[data-testid="stAppViewContainer"] h1, 
+[data-testid="stAppViewContainer"] h2, 
+[data-testid="stAppViewContainer"] h3, 
+[data-testid="stAppViewContainer"] span, 
+[data-testid="stAppViewContainer"] div {
+    color: #00008B !important;  /* deep blue */
 }
 </style>
 """
 
-st.markdown(page_style, unsafe_allow_html=True)
+st.markdown(custom_css, unsafe_allow_html=True)
+
 
 st.title("Upload your CSV File")
 

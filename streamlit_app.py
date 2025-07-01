@@ -3,6 +3,7 @@ import pandas as pd
 import yfinance as yf
 import matplotlib.pyplot as plt
 import numpy as np
+plt.style.use('seaborn-darkgrid')
 custom_css = """
 <style>
 /* Change the background color of the main content area */
@@ -205,11 +206,6 @@ def extract_tickers_from_dataframe(df: pd.DataFrame, api_key: Optional[str] = No
 
 # Exemple d'utilisation
 if __name__ == "__main__":
-    # Exemple avec un DataFrame de test
-
-    st.write("DataFrame original:")
-    st.write(df)
-    st.write()
 
     # Extraire les tickers (sans clé API pour cet exemple)
     # Pour utiliser avec une clé API: df_with_tickers = extract_tickers_from_dataframe(df, api_key="VOTRE_CLE_API")
@@ -296,7 +292,7 @@ drawdown.plot(title="Drawdown du portefeuille", color="red")
 plt.axhline(max_drawdown, linestyle='--', color='black', label=f'Max DD: {max_drawdown:.2%}')
 plt.legend()
 plt.grid(True)
-st.pyplot(plt)()
+st.pyplot(plt)
 
 # Calcul des métriques (après votre code existant)
 weighted_returns = returns @ weights_vector

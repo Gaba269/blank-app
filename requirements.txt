@@ -3,6 +3,7 @@ yfinance
 matplotlib
 pandas
 numpy
+seaborn
 requests
 scikit-learn
 

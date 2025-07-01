@@ -71,7 +71,7 @@ if 'df' in st.session_state:
 
     st.write("DataFrame mis à jour :")
     st.dataframe(st.session_state.df)
-
+df=st.session_state.df
 import pandas as pd
 import requests
 import json
